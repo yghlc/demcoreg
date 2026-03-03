@@ -165,9 +165,11 @@ def compute_offset(ref_dem_ds, src_dem_ds, src_dem_fn, mode='nuth', remove_outli
         #m, int_offset, sp_offset = coreglib.compute_offset_ncc(ref_dem, src_dem)
     elif mode == "none":
         print("Skipping alignment, writing out DEM with median bias over static surfaces removed")
-        dst_fn = outprefix+'_med%0.1f.tif' % dz
-        iolib.writeGTiff(src_dem_orig + dz, dst_fn, src_dem_ds)
-        sys.exit()
+        # dst_fn = outprefix+'_med%0.1f.tif' % dz
+        # iolib.writeGTiff(src_dem_orig + dz, dst_fn, src_dem_ds)
+        # sys.exit()
+        # return dz directly, and keep the same output format for consistency with other modes
+        return 0.0, 0.0, -dz, static_mask, None
     #Note: minus signs here since we are computing dz=(src-ref), but adjusting src
     return -dx, -dy, -dz, static_mask, fig
 
@@ -548,7 +550,7 @@ def main(argv=None):
         align_stats['res']['coreg'] = res
         align_stats['center_coord'] = {'lon':center_coord_ll[0], 'lat':center_coord_ll[1], \
                 'x':center_coord_xy[0], 'y':center_coord_xy[1]}
-        align_stats['shift'] = {'dx':dx_total, 'dy':dy_total, 'dz':np.float64(dz_total), 'dm':dm_total}
+        align_stats['shift'] = {'dx':dx_total, 'dy':dy_total, 'dz':np.float64(dz_total), 'dm':np.float64(dm_total)}
         #This tiltcorr flag gets set to false, need better flag
         if tiltcorr:
             align_stats['tiltcorr'] = {}
